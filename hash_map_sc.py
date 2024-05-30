@@ -205,21 +205,52 @@ class HashMap:
 
     def remove(self, key: str) -> None:
         """
-        TODO: Write this implementation
+        Removes the specified key and its associated value if said key exists in the HashMap.
+
+        :param key:     String representing key to be removed from HashMap (along with its associated value).
+
+        :return:        None.
         """
-        pass
+        # Access bucket (LinkedList) hashed to key
+        bucket = self._buckets[self._calculate_index(key)]
+
+        # Attempt to remove node with matching key. If successful, decrement HashMap size.
+        if bucket.remove(key):
+            self._size -= 1
 
     def get_keys_and_values(self) -> DynamicArray:
         """
-        TODO: Write this implementation
+        Returns a DynamicArray containing one Tuple for each key/value pair in the HashMap.
+
+        :param:         None.
+
+        :return:        DynamicArray containing a (key, value) Tuple for each key/value pair in the HashMap.
         """
-        pass
+        keys_and_values = DynamicArray()
+
+        # Iterate through each bucket
+        for index in range(self._capacity):
+            bucket = self._buckets[index]
+            # Iterate through each node in bucket and append a tuple for each key/value pair
+            for node in bucket:
+                keys_and_values.append((node.key, node.value))
+            # Return the DynamicArray once all key/value pairs have been added
+            if keys_and_values.length() == self._size:
+                return keys_and_values
 
     def clear(self) -> None:
         """
-        TODO: Write this implementation
+        Clears the contents of the HashMap without changing the table's capacity.
+
+        :param:         None.
+
+        :return:        None.
         """
-        pass
+        # Replace each bucket with a fresh (empty) LinkedList
+        for index in range(self._capacity):
+            self._buckets[index] = LinkedList()
+
+        self._size = 0
 
     def _calculate_index(self, key: str) -> int:
         """
@@ -405,29 +436,29 @@ if __name__ == "__main__":
     # m.resize_table(2)
     # print(m.get_keys_and_values())
     #
-    # print("\nPDF - clear example 1")
-    # print("---------------------")
-    # m = HashMap(101, hash_function_1)
-    # print(m.get_size(), m.get_capacity())
-    # m.put('key1', 10)
-    # m.put('key2', 20)
-    # m.put('key1', 30)
-    # print(m.get_size(), m.get_capacity())
-    # m.clear()
-    # print(m.get_size(), m.get_capacity())
-    #
-    # print("\nPDF - clear example 2")
-    # print("---------------------")
-    # m = HashMap(53, hash_function_1)
-    # print(m.get_size(), m.get_capacity())
-    # m.put('key1', 10)
-    # print(m.get_size(), m.get_capacity())
-    # m.put('key2', 20)
-    # print(m.get_size(), m.get_capacity())
-    # m.resize_table(100)
-    # print(m.get_size(), m.get_capacity())
-    # m.clear()
-    # print(m.get_size(), m.get_capacity())
+    print("\nPDF - clear example 1")
+    print("---------------------")
+    m = HashMap(101, hash_function_1)
+    print(m.get_size(), m.get_capacity())
+    m.put('key1', 10)
+    m.put('key2', 20)
+    m.put('key1', 30)
+    print(m.get_size(), m.get_capacity())
+    m.clear()
+    print(m.get_size(), m.get_capacity())
+
+    print("\nPDF - clear example 2")
+    print("---------------------")
+    m = HashMap(53, hash_function_1)
+    print(m.get_size(), m.get_capacity())
+    m.put('key1', 10)
+    print(m.get_size(), m.get_capacity())
+    m.put('key2', 20)
+    print(m.get_size(), m.get_capacity())
+    m.resize_table(100)
+    print(m.get_size(), m.get_capacity())
+    m.clear()
+    print(m.get_size(), m.get_capacity())
     #
     # print("\nPDF - find_mode example 1")
     # print("-----------------------------")
