@@ -271,12 +271,45 @@ class HashMap:
 
 def find_mode(da: DynamicArray) -> tuple[DynamicArray, int]:
     """
-    TODO: Write this implementation
+    Receives a DynamicArray and returns a tuple containing (mode, frequency). Input does not need to be sorted.
+
+    :param da:          DynamicArray for which the mode and frequency will be found.
+
+    :return:            Tuple containing DynamicArray of mode(s) and integer representing frequency of the mode.
     """
-    # if you'd like to use a hash map,
-    # use this instance of your Separate Chaining HashMap
     map = HashMap()
 
+    # Iterate through input array and add element as map key and frequency as its value.
+    for index in range(da.length()):
+        cur_val = da[index]
+        existing_val = map.get(cur_val)
+        # If key exists in map, increment its value by 1. Otherwise, add the new key with a value of 1.
+        if existing_val:
+            map.put(cur_val, existing_val+1)
+        else:
+            map.put(cur_val, 1)
+
+    # Generate array of tuples in the form (value, frequency)
+    val_freq_arr = map.get_keys_and_values()
+
+    # Initialize the return variables
+    mode = DynamicArray()
+    freq = 0
+
+    # Iterate through the array of tuples and assign the value and frequency to variables
+    for index in range(val_freq_arr.length()):
+        value = val_freq_arr[index][0]
+        cur_freq = val_freq_arr[index][1]
+        # If the current value has a higher frequency than current max, replace mode with value and update frequency
+        if cur_freq > freq:
+            mode = DynamicArray()
+            mode.append(value)
+            freq = cur_freq
+        # If the current value's frequency ties the current max, add value to mode
+        elif cur_freq == freq:
+            mode.append(value)
+
+    return mode, freq
 
 # ------------------- BASIC TESTING ---------------------------------------- #
 
@@ -436,45 +469,45 @@ if __name__ == "__main__":
     # m.resize_table(2)
     # print(m.get_keys_and_values())
     #
-    print("\nPDF - clear example 1")
-    print("---------------------")
-    m = HashMap(101, hash_function_1)
-    print(m.get_size(), m.get_capacity())
-    m.put('key1', 10)
-    m.put('key2', 20)
-    m.put('key1', 30)
-    print(m.get_size(), m.get_capacity())
-    m.clear()
-    print(m.get_size(), m.get_capacity())
+    # print("\nPDF - clear example 1")
+    # print("---------------------")
+    # m = HashMap(101, hash_function_1)
+    # print(m.get_size(), m.get_capacity())
+    # m.put('key1', 10)
+    # m.put('key2', 20)
+    # m.put('key1', 30)
+    # print(m.get_size(), m.get_capacity())
+    # m.clear()
+    # print(m.get_size(), m.get_capacity())
+    #
+    # print("\nPDF - clear example 2")
+    # print("---------------------")
+    # m = HashMap(53, hash_function_1)
+    # print(m.get_size(), m.get_capacity())
+    # m.put('key1', 10)
+    # print(m.get_size(), m.get_capacity())
+    # m.put('key2', 20)
+    # print(m.get_size(), m.get_capacity())
+    # m.resize_table(100)
+    # print(m.get_size(), m.get_capacity())
+    # m.clear()
+    # print(m.get_size(), m.get_capacity())
+    #
+    print("\nPDF - find_mode example 1")
+    print("-----------------------------")
+    da = DynamicArray(["apple", "apple", "grape", "melon", "peach"])
+    mode, frequency = find_mode(da)
+    print(f"Input: {da}\nMode : {mode}, Frequency: {frequency}")
 
-    print("\nPDF - clear example 2")
-    print("---------------------")
-    m = HashMap(53, hash_function_1)
-    print(m.get_size(), m.get_capacity())
-    m.put('key1', 10)
-    print(m.get_size(), m.get_capacity())
-    m.put('key2', 20)
-    print(m.get_size(), m.get_capacity())
-    m.resize_table(100)
-    print(m.get_size(), m.get_capacity())
-    m.clear()
-    print(m.get_size(), m.get_capacity())
-    #
-    # print("\nPDF - find_mode example 1")
-    # print("-----------------------------")
-    # da = DynamicArray(["apple", "apple", "grape", "melon", "peach"])
-    # mode, frequency = find_mode(da)
-    # print(f"Input: {da}\nMode : {mode}, Frequency: {frequency}")
-    #
-    # print("\nPDF - find_mode example 2")
-    # print("-----------------------------")
-    # test_cases = (
-    #     ["Arch", "Manjaro", "Manjaro", "Mint", "Mint", "Mint", "Ubuntu", "Ubuntu", "Ubuntu"],
-    #     ["one", "two", "three", "four", "five"],
-    #     ["2", "4", "2", "6", "8", "4", "1", "3", "4", "5", "7", "3", "3", "2"]
-    # )
-    #
-    # for case in test_cases:
-    #     da = DynamicArray(case)
-    #     mode, frequency = find_mode(da)
-    #     print(f"Input: {da}\nMode : {mode}, Frequency: {frequency}\n")
+    print("\nPDF - find_mode example 2")
+    print("-----------------------------")
+    test_cases = (
+        ["Arch", "Manjaro", "Manjaro", "Mint", "Mint", "Mint", "Ubuntu", "Ubuntu", "Ubuntu"],
+        ["one", "two", "three", "four", "five"],
+        ["2", "4", "2", "6", "8", "4", "1", "3", "4", "5", "7", "3", "3", "2"]
+    )
+
+    for case in test_cases:
+        da = DynamicArray(case)
+        mode, frequency = find_mode(da)
+        print(f"Input: {da}\nMode : {mode}, Frequency: {frequency}\n")
