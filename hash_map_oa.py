@@ -87,13 +87,38 @@ class HashMap:
 
     def put(self, key: str, value: object) -> None:
         """
-        TODO: Write this implementation
+         Inserts key/value pair into HashMap. If key already exists, updates the associated value.
+
+        :param key:             String representing the key to be used to access associated value.
+        :param value:           Object representing the value to be paired with associated key.
+
+        :return:                None.
         """
-        pass
+        # Resize table if load factor >= 0.5
+        if self.table_load() >= 0.5:
+            self.resize_table(self._capacity * 2)
+
+        # Target first inactive element or active element with matching key
+        target_ind = self._find_index(key)
+        target = self._buckets[target_ind]
+
+        # If key exists and is active, update value
+        if target and not target.is_tombstone:
+            target.value = value
+        # Otherwise, insert key/value at first inactive element
+        else:
+            self._buckets[target_ind] = HashEntry(key, value)
+            self._size += 1
+
 
     def resize_table(self, new_capacity: int) -> None:
         """
-        TODO: Write this implementation
+        Resizes capacity of underlying table. If new_capacity is not prime, moves to next highest prime. If new_capacity
+        less than current number of elements in hash map, does nothing.
+
+        :param new_capacity:    Integer of new capacity for table. If not prime, updated to next highest prime.
+
+        :return:                None.
         """
         pass
 
@@ -150,6 +175,32 @@ class HashMap:
         TODO: Write this implementation
         """
         pass
+
+    def _find_index(self, key: str) -> int:
+        """
+        Receives a key, applies the hash function, and returns the first index with a matching key or inactive element.
+
+        :param key:         String representing key to be hashed / index found for.
+
+        :return:            Integer representing first index with a matching key or inactive element.
+        """
+        # Init number receiving quadratic to 1, calculate initial index, and create pointer to element at that index
+        exp_base = 1
+        ind = self._hash_function(key) % self._capacity
+        cur_entry = self._buckets[ind]
+
+        # Loop until we find empty element, inactive element, or an element with a matching key
+        while cur_entry or not cur_entry.is_tombstone or cur_entry.key != key and not cur_entry.is_tombstone:
+            # Apply quadratic probing with each loop - modulo to wrap around if new ind exceeds table
+            ind = ind + (exp_base ** 2)
+            exp_base += 1
+
+            if ind >= self._capacity:
+                ind = ind % self._capacity # !! this could be a pain point. If not, come back and consider %=
+
+            cur_entry = self._buckets[ind]
+
+        return ind
 
 
 # ------------------- BASIC TESTING ---------------------------------------- #
